@@ -113,7 +113,7 @@ const HistoryScreen = () => {
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
-      <Text style={styles.emptyIcon}>{isConversations ? "💬" : "📝"}</Text>
+      <Text style={styles.emptyIcon}>{isConversations ? "" : ""}</Text>
       <Text style={styles.emptyTitle}>
         {isConversations ? "No conversations yet" : "No quizzes yet"}
       </Text>
