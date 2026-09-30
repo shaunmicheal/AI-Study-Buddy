@@ -20,7 +20,6 @@ import {
 } from "../constants/theme";
 import { clearAllStorage, getHistory, getQuizzes } from "../utils/storage";
 
-// "Today", "Yesterday", or a short date
 const dayLabel = (iso) => {
   const date = new Date(iso);
   const startOfDay = (d) =>
@@ -38,7 +37,6 @@ const dayLabel = (iso) => {
   });
 };
 
-// Items are stored newest-first, so consecutive items with the same day label go together
 const groupByDay = (items) => {
   const groups = [];
   items.forEach((item) => {
@@ -64,7 +62,6 @@ const HistoryScreen = () => {
   const [activeTab, setActiveTab] = useState("conversations");
   const [loading, setLoading] = useState(true);
 
-  // Reload every time this screen comes into focus
   useFocusEffect(
     useCallback(() => {
       const load = async () => {

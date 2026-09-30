@@ -1,6 +1,3 @@
-// Gemini API service for AI Study Buddy
-// Key comes from .env as EXPO_PUBLIC_GEMINI_API_KEY (Expo only exposes EXPO_PUBLIC_ variables to the app)
-
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
 const GEMINI_MODEL = "gemini-3.1-flash-lite";
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
@@ -10,7 +7,6 @@ const LETTERS = ["A", "B", "C", "D"];
 const CHAT_SYSTEM_PROMPT =
   "You are an AI study buddy helping students learn. Give clear, educational and helpful answers. Keep them informative but concise, and use the earlier messages in the conversation for context.";
 
-// Turn an HTTP error from the API into a message the user (and you) can act on
 const describeApiError = (status, details) => {
   switch (status) {
     case 400:
@@ -30,10 +26,8 @@ const describeApiError = (status, details) => {
   }
 };
 
-// Wrap a single prompt as Gemini "contents"
 const toContents = (prompt) => [{ role: "user", parts: [{ text: prompt }] }];
 
-// Helper function to make API requests. `contents` is the list of conversation turns.
 const makeGeminiRequest = async (
   contents,
   { json = false, systemInstruction } = {},
@@ -99,12 +93,9 @@ const makeGeminiRequest = async (
   return text;
 };
 
-// Continue a conversation. `messages` is [{ role: 'user' | 'ai', text }, ...]
 export const chatGemini = async (messages) => {
-  // Only send the most recent messages to keep requests small
   const recent = (messages || []).slice(-20);
 
-  // Gemini expects the conversation to start with a user message
   const firstUser = recent.findIndex((m) => m.role === "user");
   const usable = firstUser >= 0 ? recent.slice(firstUser) : [];
 
@@ -122,7 +113,6 @@ export const chatGemini = async (messages) => {
   });
 };
 
-// Ask AI a single question (kept for compatibility)
 export const askGemini = async (question) => {
   if (!question || question.trim() === "") {
     throw new Error("Please enter a question");
@@ -130,8 +120,6 @@ export const askGemini = async (question) => {
 
   return await chatGemini([{ role: "user", text: question }]);
 };
-
-// Work out which letter (A-D) the correct answer is, whatever format the AI used
 const normalizeAnswer = (answer, options) => {
   const value = String(answer ?? "").trim();
   const first = value.charAt(0).toUpperCase();
@@ -149,7 +137,6 @@ const normalizeAnswer = (answer, options) => {
   return index >= 0 ? LETTERS[index] : null;
 };
 
-// Clean up and validate one question. Returns null if it is unusable.
 const normalizeQuestion = (item) => {
   if (
     !item ||
@@ -159,7 +146,6 @@ const normalizeQuestion = (item) => {
     return null;
   }
 
-  // Remove "A. " / "B) " prefixes the AI sometimes adds (the screen adds its own letters)
   const options = item.options.slice(0, 4).map((option) =>
     String(option)
       .replace(/^\s*[A-Da-d][).:]\s+/, "")
@@ -179,9 +165,7 @@ const normalizeQuestion = (item) => {
   };
 };
 
-// Parse the AI's response into an array of quiz questions
 const parseQuizResponse = (raw) => {
-  // Remove markdown code fences if present, then grab the JSON array
   const cleaned = raw.replace(/```json|```/gi, "").trim();
   const start = cleaned.indexOf("[");
   const end = cleaned.lastIndexOf("]");
@@ -211,9 +195,6 @@ const parseQuizResponse = (raw) => {
 
   return questions;
 };
-
-// Generate a quiz on a topic.
-// If studyNotes is provided (past questions + answers), the quiz is based on that material.
 export const generateQuiz = async (topic, studyNotes = "") => {
   if (!topic || topic.trim() === "") {
     throw new Error("Please enter a topic for the quiz");
@@ -249,8 +230,6 @@ Do not put letters like "A." inside the options. Make sure the questions are edu
   const raw = await makeGeminiRequest(toContents(prompt), { json: true });
   return parseQuizResponse(raw);
 };
-
-// Test the API connection (no longer called by the screens, kept for debugging)
 export const testConnection = async () => {
   try {
     await makeGeminiRequest(toContents("Say hello in one word."));

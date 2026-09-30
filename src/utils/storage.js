@@ -1,12 +1,7 @@
-// Simplified storage utils for testing - will use in-memory storage
-// Replace with AsyncStorage when available
-
 const inMemoryStorage = {
   history: [],
   quizzes: [],
 };
-
-// Save item to storage
 export const saveToStorage = async (key, data) => {
   try {
     inMemoryStorage[key] = data;
@@ -17,7 +12,6 @@ export const saveToStorage = async (key, data) => {
   }
 };
 
-// Get item from storage
 export const getFromStorage = async (key) => {
   try {
     return inMemoryStorage[key] || null;
@@ -26,8 +20,6 @@ export const getFromStorage = async (key) => {
     return null;
   }
 };
-
-// Save a single question/answer to history (older single-question format)
 export const saveToHistory = async (question, response) => {
   try {
     const history = (await getFromStorage("history")) || [];
@@ -38,8 +30,8 @@ export const saveToHistory = async (question, response) => {
       timestamp: new Date().toISOString(),
     };
 
-    history.unshift(newEntry); // Add to beginning
-    if (history.length > 50) history.pop(); // Keep only last 50 entries
+    history.unshift(newEntry);
+    if (history.length > 50) history.pop();
 
     return await saveToStorage("history", history);
   } catch (error) {
@@ -47,10 +39,6 @@ export const saveToHistory = async (question, response) => {
     return false;
   }
 };
-
-// Save (or update) a whole chat conversation as ONE history entry.
-// `question` is the first thing you asked and `response` is the latest AI reply,
-// so the History, Home and Quiz screens keep working without changes.
 export const saveConversation = async (id, messages) => {
   try {
     const history = (await getFromStorage("history")) || [];
@@ -66,12 +54,11 @@ export const saveConversation = async (id, messages) => {
       timestamp: new Date().toISOString(),
     };
 
-    // Remove the old version of this conversation, then put the updated one on top
     const existingIndex = history.findIndex((item) => item.id === id);
     if (existingIndex >= 0) history.splice(existingIndex, 1);
 
     history.unshift(entry);
-    if (history.length > 50) history.pop(); // Keep only last 50 entries
+    if (history.length > 50) history.pop();
 
     return await saveToStorage("history", history);
   } catch (error) {
@@ -80,7 +67,6 @@ export const saveConversation = async (id, messages) => {
   }
 };
 
-// Get conversation history
 export const getHistory = async () => {
   try {
     return (await getFromStorage("history")) || [];
@@ -90,7 +76,6 @@ export const getHistory = async () => {
   }
 };
 
-// Save generated quiz
 export const saveQuiz = async (topic, questions) => {
   try {
     const quizzes = (await getFromStorage("quizzes")) || [];
@@ -101,8 +86,9 @@ export const saveQuiz = async (topic, questions) => {
       timestamp: new Date().toISOString(),
     };
 
-    quizzes.unshift(newQuiz); // Add to beginning
-    if (quizzes.length > 20) quizzes.pop(); // Keep only last 20 quizzes
+    quizzes.unshift(newQuiz);
+    if (quizzes.length > 20) quizzes.pop();
+    s;
 
     return await saveToStorage("quizzes", quizzes);
   } catch (error) {
@@ -111,7 +97,6 @@ export const saveQuiz = async (topic, questions) => {
   }
 };
 
-// Get saved quizzes
 export const getQuizzes = async () => {
   try {
     return (await getFromStorage("quizzes")) || [];
@@ -121,7 +106,6 @@ export const getQuizzes = async () => {
   }
 };
 
-// Clear all storage
 export const clearAllStorage = async () => {
   try {
     inMemoryStorage.history = [];

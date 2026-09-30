@@ -23,7 +23,6 @@ import {
 import { generateQuiz } from "../services/geminiService";
 import { getHistory, getQuizzes, saveQuiz } from "../utils/storage";
 
-// Turn past questions + answers into study notes for the quiz prompt
 const buildNotes = (items) =>
   items
     .map(
@@ -45,7 +44,6 @@ const QuizScreen = () => {
   const [showAnswers, setShowAnswers] = useState(false);
   const [recent, setRecent] = useState([]);
 
-  // Load the last 5 questions each time this screen is shown
   useFocusEffect(
     useCallback(() => {
       const loadRecent = async () => {
@@ -56,7 +54,6 @@ const QuizScreen = () => {
     }, []),
   );
 
-  // When opened from the History screen, show the saved quiz
   useEffect(() => {
     const id = Array.isArray(quizId) ? quizId[0] : quizId;
     if (!id) return;
@@ -74,8 +71,6 @@ const QuizScreen = () => {
 
     loadSaved();
   }, [quizId]);
-
-  // Shared by all three ways of starting a quiz
   const runQuiz = async (quizTopic, studyNotes = "") => {
     setLoading(true);
     setError(null);
@@ -93,7 +88,6 @@ const QuizScreen = () => {
       setQuiz(newQuiz);
       setShowAnswers(false);
 
-      // Save quiz to storage
       await saveQuiz(quizTopic, questions);
     } catch (err) {
       setError(
@@ -112,15 +106,12 @@ const QuizScreen = () => {
     }
     runQuiz(topic.trim());
   };
-
-  // Quiz based on one past question and its answer
   const handleQuizFromItem = (item) => {
     const label = `Review: ${shorten(item.question)}`;
     setTopic(label);
     runQuiz(label, buildNotes([item]));
   };
 
-  // Quiz based on all the recent questions together
   const handleQuizFromRecent = () => {
     const label = "Review: my recent questions";
     setTopic(label);
