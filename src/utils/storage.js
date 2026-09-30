@@ -11,7 +11,6 @@ export const saveToStorage = async (key, data) => {
     return false;
   }
 };
-
 export const getFromStorage = async (key) => {
   try {
     return inMemoryStorage[key] || null;
@@ -59,7 +58,6 @@ export const saveConversation = async (id, messages) => {
 
     history.unshift(entry);
     if (history.length > 50) history.pop();
-
     return await saveToStorage("history", history);
   } catch (error) {
     console.error("Error saving conversation:", error);
@@ -88,7 +86,6 @@ export const saveQuiz = async (topic, questions) => {
 
     quizzes.unshift(newQuiz);
     if (quizzes.length > 20) quizzes.pop();
-    s;
 
     return await saveToStorage("quizzes", quizzes);
   } catch (error) {
