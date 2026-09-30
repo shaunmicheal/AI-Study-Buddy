@@ -1,6 +1,4 @@
-import { version } from 'expo/package.json';
-import { Image } from 'expo-image';
-import { useColorScheme, StyleSheet } from 'react-native';
+import { useColorScheme, StyleSheet, Text } from 'react-native';
 
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
@@ -13,16 +11,9 @@ export function WebBadge() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="code" themeColor="textSecondary" style={styles.versionText}>
-        v{version}
+        v1.0.0
       </ThemedText>
-      <Image
-        source={
-          scheme === 'dark'
-            ? require('@/assets/images/expo-badge-white.png')
-            : require('@/assets/images/expo-badge.png')
-        }
-        style={styles.badgeImage}
-      />
+      <Text style={styles.badgeText}>Web</Text>
     </ThemedView>
   );
 }
@@ -36,8 +27,12 @@ const styles = StyleSheet.create({
   versionText: {
     textAlign: 'center',
   },
-  badgeImage: {
-    width: 123,
-    aspectRatio: 123 / 24,
+  badgeText: {
+    fontSize: 12,
+    color: '#6B7D3A',
+    fontWeight: 'bold',
+    padding: 4,
+    backgroundColor: '#F5F1E8',
+    borderRadius: 4,
   },
 });
